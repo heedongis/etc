@@ -124,5 +124,4 @@ def main():
 
 
 if __name__ == '__main__':
-    # sys.exit(main() or 0)
-    png_to_pdf('./temp', 360, 'jump_to_python')
+    sys.exit(main() or 0)
