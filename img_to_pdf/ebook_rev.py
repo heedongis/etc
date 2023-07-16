@@ -71,19 +71,22 @@ def get_picture(path, page):
 
 
 def png_to_pdf(input_path, page, dir_name):
-    file_list = os.listdir(input_path)
 
-    file_list.sort()
-    print(file_list)
+    file_list = os.listdir(input_path)
+    png_files = [file for file in file_list if file.lower().endswith('.png')]
+
+    png_files = sorted(png_files)
+    png_files.sort(key=lambda x: int(x.split('.')[0]))
+    print(png_files)
 
     img_list = []
-    img_path = input_path + '/' + file_list[0]
+    img_path = input_path + '/' + png_files[0]
     # print(img_path)
 
     im_buf = Image.open(img_path)
     cvt_rgb_0 = im_buf.convert('RGB')
 
-    for i in file_list:
+    for i in png_files:
         img_path = input_path + '/' + i
         # print(img_path)
         im_buf = Image.open(img_path)
@@ -121,4 +124,5 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main() or 0)
+    # sys.exit(main() or 0)
+    png_to_pdf('./temp', 360, 'jump_to_python')
