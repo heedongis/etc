@@ -65,15 +65,14 @@ def serial_read_thread(ser):
 
 # 스레드에서 실행될 함수 정의 - 데이터 전송
 def serial_write_thread(cnca):
-    data_to_send=""
     while True:
         try:
             data_to_send = data_queue.get_nowait()
+            cnca.write((data_to_send + '\r\n').encode('utf-8'))
+            time.sleep(2.0)
+            print("Sent to virtual COM port: ", data_to_send)
         except queue.Empty:
-            if data_to_send != "":
-                cnca.write((data_to_send + '\r\n').encode('utf-8'))
-                time.sleep(2.0)
-                print("Sent to virtual COM port: ", data_to_send)
+            print('queue is empty!!')
             continue
         # 큐 작업 완료 표시
         data_queue.task_done()
