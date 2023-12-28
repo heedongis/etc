@@ -33,8 +33,8 @@ com_port = simpledialog.askstring("Input", "바코드 스캐너 포트를 입력
                                   parent=root)
 
 # 시리얼 포트 설정
-ser = serial.Serial(com_port, 9600, timeout=1)  # 실제 포트, 9600 보레이트로 설정
-
+# ser = serial.Serial(com_port, 9600, timeout=1)  # 실제 포트, 9600 보레이트로 설정
+ser = input("input barcode :")
 # 가상 포트 설정
 cnca_port = simpledialog.askstring("Input", "가상포트를 입력하세요",
                                    initialvalue="COM11",
@@ -62,18 +62,16 @@ def serial_read_thread(ser):
 
         time.sleep(0.1)
 
-data_to_send=""
 # 스레드에서 실행될 함수 정의 - 데이터 전송
 def serial_write_thread(cnca):
-    global data_to_send
     while True:
         try:
             data_to_send = data_queue.get_nowait()
+            cnca.write((data_to_send + '\r\n').encode('utf-8'))
+            time.sleep(2.0)
+            print("Sending barcode to center system: ", data_to_send)
+
         except queue.Empty:
-            if data_to_send != "":
-                cnca.write((data_to_send + '\r\n').encode('utf-8'))
-                time.sleep(2.0)
-                print("Sent to virtual COM port: ", data_to_send)
             continue
         # 큐 작업 완료 표시
         data_queue.task_done()
