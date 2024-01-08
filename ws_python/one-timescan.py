@@ -28,20 +28,21 @@ for port in com_ports:
         break
 
 # 실제 포트 설정
-com_port = simpledialog.askstring("Input", "바코드 스캐너 포트를 입력하세요",
-                                  initialvalue=default_com_port,
-                                  parent=root)
+com_port = simpledialog.askstring(
+    "Input", "바코드 스캐너 포트를 입력하세요", initialvalue=default_com_port, parent=root
+)
 
 # 시리얼 포트 설정
 # ser = serial.Serial(com_port, 9600, timeout=1)  # 실제 포트, 9600 보레이트로 설정
 ser = input("input barcode :")
 # 가상 포트 설정
-cnca_port = simpledialog.askstring("Input", "가상포트를 입력하세요",
-                                   initialvalue="COM11",
-                                   parent=root)
+cnca_port = simpledialog.askstring(
+    "Input", "가상포트를 입력하세요", initialvalue="COM11", parent=root
+)
 
 # CNCA0 포트로 연결
 cnca = serial.Serial(cnca_port, 9600, timeout=1)
+
 
 # 스레드에서 실행될 함수 정의 - 데이터 수신 및 처리
 def serial_read_thread(ser):
@@ -49,12 +50,12 @@ def serial_read_thread(ser):
 
     while True:
         if ser.in_waiting > 0:
-            line = ser.readline().decode('utf-8').strip()
+            line = ser.readline().decode("utf-8").strip()
             print("Received from COM5: ", line)
             previous_data = line
 
             keyboard.type(previous_data)
-            keyboard.type('\n')
+            keyboard.type("\n")
             print("Typed to keyboard and pressed Enter: ", previous_data)
 
             # 큐에 데이터 추가
@@ -62,19 +63,21 @@ def serial_read_thread(ser):
 
         time.sleep(0.1)
 
+
 # 스레드에서 실행될 함수 정의 - 데이터 전송
 def serial_write_thread(cnca):
     while True:
         try:
             data_to_send = data_queue.get_nowait()
-            cnca.write((data_to_send + '\r\n').encode('utf-8'))
-            time.sleep(2.0)
+            cnca.write((data_to_send + "\r\n").encode("utf-8"))
+            time.sleep(1.0)
             print("Sending barcode to center system: ", data_to_send)
+            data_queue.task_done()
 
         except queue.Empty:
+            print("스캔 대기중")
             continue
         # 큐 작업 완료 표시
-        data_queue.task_done()
 
         time.sleep(0.1)
 
