@@ -33,8 +33,7 @@ com_port = simpledialog.askstring(
 )
 
 # 시리얼 포트 설정
-# ser = serial.Serial(com_port, 9600, timeout=1)  # 실제 포트, 9600 보레이트로 설정
-ser = input("input barcode :")
+ser = serial.Serial(com_port, 9600, timeout=1)  # 실제 포트, 9600 보레이트로 설정
 # 가상 포트 설정
 cnca_port = simpledialog.askstring(
     "Input", "가상포트를 입력하세요", initialvalue="COM11", parent=root
